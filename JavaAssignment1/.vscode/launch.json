@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Hangman",
+            "request": "launch",
+            "mainClass": "Hangman",
+            "projectName": "JavaAssignment1_530e30cf"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "HelloJava",
+            "request": "launch",
+            "mainClass": "HelloJava",
+            "projectName": "JavaAssignment1_530e30cf"
+        }
+    ]
+}
