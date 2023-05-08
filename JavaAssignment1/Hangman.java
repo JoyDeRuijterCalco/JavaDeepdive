@@ -1,282 +1,204 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
+
+import javax.swing.plaf.synth.Region;
 
 import java.util.List;
 
 public class Hangman {
 
-    public static Random random = new Random();
-    public static Scanner scanner = new Scanner(System.in);
-
-    public static char[] wordLetters;
+    /* #region static variables */
     public static char[] placeholders;
     public static List<Character> guessedLetters = new ArrayList<Character>();
-    public static List<Character> wrongLetters = new ArrayList<Character>();
-    public static int noGuessesLeft = 6;
-    public static String word = "";
     public static char guess;
 
-    public static String[] words = {"ant", "baboon", "badger", "bat", "bear", "beaver", "camel",
-    "cat", "clam", "cobra", "cougar", "coyote", "crow", "deer",
-    "dog", "donkey", "duck", "eagle", "ferret", "fox", "frog", "goat",
-    "goose", "hawk", "lion", "lizard", "llama", "mole", "monkey", "moose",
-    "mouse", "mule", "newt", "otter", "owl", "panda", "parrot", "pigeon", 
-    "python", "rabbit", "ram", "rat", "raven","rhino", "salmon", "seal",
-    "shark", "sheep", "skunk", "sloth", "snake", "spider", "stork", "swan",
-    "tiger", "toad", "trout", "turkey", "turtle", "weasel", "whale", "wolf",
-    "wombat", "zebra"};
+    public static String[] words = { "ant", "baboon", "badger", "bat", "bear", "beaver", "camel",
+            "cat", "clam", "cobra", "cougar", "coyote", "crow", "deer", "dog", "donkey", "duck", "eagle",
+            "ferret", "fox", "frog", "goat", "goose", "hawk", "lion", "lizard", "llama", "mole", "monkey",
+            "moose", "mouse", "mule", "newt", "otter", "owl", "panda", "parrot", "pigeon", "python",
+            "rabbit", "ram", "rat", "raven", "rhino", "salmon", "seal", "shark", "sheep", "skunk", "sloth",
+            "snake", "spider", "stork", "swan", "tiger", "toad", "trout", "turkey", "turtle", "weasel",
+            "whale", "wolf", "wombat", "zebra" };
 
-    public static String[] gallows = {"+---+\n" +
-    "|   |\n" +
-    "    |\n" +
-    "    |\n" +
-    "    |\n" +
-    "    |\n" +
-    "=========\n",
+    public static String[] gallows = {
+            "+---+\n" +
+                    "|   |\n" +
+                    "    |\n" +
+                    "    |\n" +
+                    "    |\n" +
+                    "    |\n" +
+                    "=========\n",
 
-    "+---+\n" +
-    "|   |\n" +
-    "O   |\n" +
-    "    |\n" +
-    "    |\n" +
-    "    |\n" +
-    "=========\n",
+            "+---+\n" +
+                    "|   |\n" +
+                    "O   |\n" +
+                    "    |\n" +
+                    "    |\n" +
+                    "    |\n" +
+                    "=========\n",
 
-    "+---+\n" +
-    "|   |\n" +
-    "O   |\n" +
-    "|   |\n" +
-    "    |\n" +
-    "    |\n" +
-    "=========\n",
+            "+---+\n" +
+                    "|   |\n" +
+                    "O   |\n" +
+                    "|   |\n" +
+                    "    |\n" +
+                    "    |\n" +
+                    "=========\n",
 
-    " +---+\n" +
-    " |   |\n" +
-    " O   |\n" +
-    "/|   |\n" +
-    "     |\n" +
-    "     |\n" +
-    " =========\n",
+            " +---+\n" +
+                    " |   |\n" +
+                    " O   |\n" +
+                    "/|   |\n" +
+                    "     |\n" +
+                    "     |\n" +
+                    " =========\n",
 
-    " +---+\n" +
-    " |   |\n" +
-    " O   |\n" +
-    "/|\\  |\n" + //if you were wondering, the only way to print '\' is with a trailing escape character, which also happens to be '\'
-    "     |\n" +
-    "     |\n" +
-    " =========\n",
+            " +---+\n" +
+                    " |   |\n" +
+                    " O   |\n" +
+                    "/|\\  |\n" +
+                    "     |\n" +
+                    "     |\n" +
+                    " =========\n",
 
-    " +---+\n" +
-    " |   |\n" +
-    " O   |\n" +
-    "/|\\  |\n" +
-    "/    |\n" +
-    "     |\n" +
-    " =========\n",
+            " +---+\n" +
+                    " |   |\n" +
+                    " O   |\n" +
+                    "/|\\  |\n" +
+                    "/    |\n" +
+                    "     |\n" +
+                    " =========\n",
 
-    " +---+\n" +
-    " |   |\n" +
-    " O   |\n" +
-    "/|\\  |\n" + 
-    "/ \\  |\n" +
-    "     |\n" +
-    " =========\n"};
+            " +---+\n" +
+                    " |   |\n" +
+                    " O   |\n" +
+                    "/|\\  |\n" +
+                    "/ \\  |\n" +
+                    "     |\n" +
+                    " =========\n"
+    };
+    /* #endregion */
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String word = RandomWord();
+        char[] wordLetters = WordLetters(word);
+        placeholders = InitializePlaceholders(word.length());
+        char[] wrongGuesses = new char[6];
+        int noGuessesLeft = 6;
 
+        while (noGuessesLeft != 0) {
+            PrintGame(noGuessesLeft, wrongGuesses);
+            Guess(scanner);
 
-        //Initialize the word and wordLetters variables and placeholders
-        word = RandomWord();
-        wordLetters = WordLetters(word);
-        InitializePlaceholders(wordLetters.length);
-        
-        // //Run the game
-        // while(!GameIsOver())
-        // {
-            
-        // }
-
-        //TEST print out the word
-        // System.out.println(wordLetters.length);
-        System.out.println(word);
-
-        // //TEST printout all the letters of the word
-        // for(char c : wordLetters)
-        //     System.out.println(c);
-
-        // //TEST INPUT
-        // guess = Guess();
-        // System.out.println(guess);
-
-        // //TEST CHECK
-        //System.out.println("Guess was: " + CheckGuess());
-
-        //TEST CHECK IF GAME IS OVER
-
-        while(!GameIsOver())
-        {
-            PrintGame();
-            UpdatePlaceholders(guess);
-        }
-
-        if(GameIsOver() && noGuessesLeft == 0)
-        {
-            System.out.println("RIP YOU LOST");
-            scanner.close();
-        }
-        else if(GameIsOver() && noGuessesLeft > 0)
-        {
-            System.out.println("YAY! YOU GUESSED THE WORD CORRECTLY!");
-            scanner.close();
-        }
-    }
-
-    // Return a random word from the words array
-    private static String RandomWord() { return words[random.nextInt(words.length)]; }
-
-    // Return a char array that contains the letters of the given word
-    private static char[] WordLetters(String _word) { return _word.toCharArray(); } 
-
-    // Handle the system printing guess and takes the char input from the user
-    private static char Guess()
-    {
-        System.out.print("Guess: ");
-        String fullInput = scanner.next();
-
-        if(fullInput.length() < 0)
-            System.out.println("INVALID: NO LETTER PROVIDED");
-        else if(fullInput.length() > 1)
-            System.out.println("INVALID: MORE THAN ONE LETTER PROVIDED");
-        else
-        {
-            if(!CheckGuess())
-            {
+            if (CheckGuess(wordLetters))
+                UpdatePlaceholders(word);
+            else {
+                wrongGuesses[6 - noGuessesLeft] = guess;
                 noGuessesLeft--;
-                wrongLetters.add(guess);
             }
 
-            return fullInput.charAt(0);
+            if (AllLettersGuessed(wordLetters, gallows, noGuessesLeft))
+                break;
         }
-        
-        return '?';
+
+        if (noGuessesLeft == 0) {
+            System.out.print(gallows[6]);
+            System.out.print("\n RIP YOU LOST!\n");
+            System.out.print("The answer was:   " + word + "\n");
+        }
+        scanner.close();
+    }
+
+    // Returns a random word from the words array
+    public static String RandomWord() 
+    {
+        Random random = new Random();
+        return words[random.nextInt(words.length)];
+    }
+
+    // Returns a char array that contains the letters of the given word
+    public static char[] WordLetters(String _word) { return _word.toCharArray(); }
+
+    // Initializes placeholders based on number of letters
+    public static char[] InitializePlaceholders(int _noLetters) 
+    {
+        char[] placeholders = new char[_noLetters];
+        for (int i = 0; i < placeholders.length; i++)
+            placeholders[i] = '_';
+        return placeholders;
+    }
+
+    // Handles the printing of guess and takes the char input from the user
+    public static void Guess(Scanner _scanner) {
+        System.out.print("Guess:    ");
+        guess = _scanner.next().charAt(0);
+        System.out.print("\n");
     }
 
     // Checks whether or not the guess was correct and if it was guessed before
-    private static boolean CheckGuess()
-    {
-        for (char c : wordLetters)
-        {
-            if(guess == c)
-            {
-                if(guessedLetters.contains(guess))
-                {
-                    System.out.println("YOU ALREADY CORRECTLY GUESSED THIS LETTER!");
-                }
-                else
-                {
+    public static boolean CheckGuess(char[] _wordLetters) {
+        for (char c : _wordLetters) {
+            if (guess == c) {
+                if (guessedLetters.contains(guess))
+                    System.out.print("\nYOU ALREADY CORRECTLY GUESSED THIS LETTER!\n");
+                else {
                     guessedLetters.add(guess);
-                    System.out.println("YOU GUESSED A NEW LETTER!");
-                    UpdatePlaceholders(guess);
+                    System.out.print("\nYOU GUESSED A NEW LETTER!\n");
                 }
                 return true;
             }
         }
+        System.out.print("\nYOU GUESSED WRONG!\n");
         return false;
     }
 
-    // Check if all letters are guessed
-    private static boolean AllLettersGuessed()
-    {
-        for(char c : wordLetters)
-        {
-            if(!guessedLetters.contains(c))
-                return false;
-        }
-        return true;
-    }
-
-    // Check if everything is guessed or if the amount of guesses ran out
-    private static boolean GameIsOver()
-    {
-        if(noGuessesLeft == 0 || AllLettersGuessed())
+    // Checks if all letters are guessed
+    public static boolean AllLettersGuessed(char[] _wordLetters, String[] _gallows, int _noGuessesLeft) {
+        if (Arrays.equals(placeholders, _wordLetters)) {
+            System.out.print(_gallows[6 - _noGuessesLeft] + "\n");
+            PrintPlaceholders();
+            System.out.print("YAAYY YOU DID IT! \n");
             return true;
-        else
-            return false;
+        }
+        return false;
     }
 
-    
-    // Fill placeholders taking number of letters
-    private static void InitializePlaceholders(int _noLetters)
-    {
-        placeholders = new char[_noLetters];
-        for(int i = 0; i < placeholders.length; i++)
-        placeholders[i] = '_';
-    }
-    
-    // Print the whole game on the screen
-    private static void PrintGame()
-    {
-        // Print gallow
-        System.out.println(gallows[6-noGuessesLeft] + "\n");
-        // Print Word: _ _ _
-        System.out.println("Word:   " + CurrentWordProgress() + "\n");
-        // Print Misses: l, e, t, t, e, r, s
-        System.out.println("Misses:   " + WrongGuesses() + "\n");
-        // Print Guess : <input>
-        guess = Guess();
-    }
-
-    // Update the placeholders
-    private static void UpdatePlaceholders(char _guess)
-    {
-        // Check in what index the _guess is supposed to be, could be multiple
-        // Replace the placeholders with the _guess char
-        for(int i = 0; i < wordLetters.length; i++)
-        {
-            if(wordLetters[i] == _guess)
-            {
-                if(i == 0)
-                    placeholders[0] = _guess;
-                else
-                {
-                    //TODO BECAUSE THIS DOESN'T MAKE SENSE, SAVE THE INDEX AND USE THAT
-                    placeholders[i + 1] = _guess;
-                }
-            }
+    // Updates the placeholders
+    public static void UpdatePlaceholders(String _word) {
+        for (int i = 0; i < _word.length(); i++) {
+            if (_word.charAt(i) == guess)
+            placeholders[i] = guess;
         }
     }
-
-    // Turn the placeholders array into an actual displayable string seperated by spaces
-    private static String CurrentWordProgress()
-    {
-        int phIndex = 0;
-        char[] tempArray = new char[placeholders.length * 2 + 1];
-        for(int i = 0; i < placeholders.length * 2; i+=2)
-        {
-            tempArray[i] = placeholders[phIndex];
-
-            if(i + 1 > placeholders.length * 2)
-                continue;
-
-            tempArray[i + 1] = ' ';
-            phIndex++;
-        }
-        return new String(tempArray);
+    
+    // Prints most the game in the terminal, which contains the current gallow, the
+    // word placeholders and the wrong guesses
+    public static void PrintGame(int _noGuessesLeft, char[] _wrongGuesses) {
+        System.out.print(gallows[6 - _noGuessesLeft] + "\n");
+        PrintPlaceholders();
+        PrintWrongGuesses(_wrongGuesses);
     }
 
-    private static String WrongGuesses()
-    {
-        String endString = "";
-        for(int i = 0; i < wrongLetters.size(); i++)
-            endString += wrongLetters.get(i);
+    // Prints the placeholders array seperated by spaces
+    public static void PrintPlaceholders() {
+        System.out.print("Word:   ");
 
-        return endString;
+        for (int i = 0; i < placeholders.length; i++)
+            System.out.print(" " + placeholders[i]);
+
+        System.out.print("\n");
     }
 
+    // Prints the wrong guesses array seperated by spaces
+    public static void PrintWrongGuesses(char[] _wrongGuesses) {
+        System.out.print("Misses:   ");
+
+        for (int i = 0; i < _wrongGuesses.length; i++)
+            System.out.print(_wrongGuesses[i] + " ");
+
+        System.out.print("\n");
+    }
 }
-
-
-
-
-
