@@ -10,7 +10,6 @@ public class Movie {
         this.rating = rating;
     }    
 
-
     public Movie(Movie source) {
         this.name = source.name;
         this.format = source.format;
@@ -43,7 +42,6 @@ public class Movie {
 
     public String toString() {
         return this.rating + "\t" + this.format + "\t\t" + this.name + "";
-    }
-    
+    }    
 
 }

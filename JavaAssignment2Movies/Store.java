@@ -7,13 +7,12 @@ public class Store {
     }
 
     public Movie getMovie(int index) {
-        return new Movie(movies[index]);
+        return new Movie(this.movies[index]);
     }
 
     public void setMovie(int index, Movie movie) {
         this.movies[index] = new Movie(movie);
     }
-
 
     public String toString() {
         String temp = "";

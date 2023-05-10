@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Main {
 
     static Store store = new Store();
@@ -17,18 +19,41 @@ public class Main {
             new Movie("The Lord of the Rings: The Fellowship of the Ring", "DVD", 8.8)
         };
 
-        // TODO: populate the store object (defined on top) with movies before printing it
-        for(int i = 0; i < 10; i++)
+        for (int i = 0; i < movies.length; i++) {
             store.setMovie(i, movies[i]);
+        }
 
         printStore();
+        userInput();
+        
+    }
 
+    public static void userInput() {
+        Scanner scanner = new Scanner(System.in);
+        String status = "continue";
+
+        while (status.equals("continue")) {
+            System.out.print("To edit another rating, type: 'continue': ");
+
+            System.out.print("\nPlease choose an integer between 0 - 9: ");
+            int enteredInt = scanner.nextInt();
+            Movie selectedMovie = store.getMovie(enteredInt);
+
+            System.out.print("\nSet a new rating for " + selectedMovie.getName() + ": ");
+            double enteredRating = scanner.nextDouble();
+
+            Movie newMovie = new Movie(selectedMovie.getName(), selectedMovie.getFormat(), enteredRating);
+            store.setMovie(enteredInt, newMovie);
+            printStore();
+
+            status = scanner.next();
+        }
+        scanner.close();
     }
 
     public static void printStore() {
         System.out.println("********************************MOVIE STORE*******************************");
         System.out.println(store);
     }
-
 
 }
